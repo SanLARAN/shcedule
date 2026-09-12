@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ru" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f2f2f0" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#08090b" media="(prefers-color-scheme: dark)" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* фон до применения темы — чтобы не было вспышки белого */
+      html { background: #f2f2f0; }
+      html[data-theme='dark'] { background: #08090b; }
+    </style>
+    <meta name="description" content="Форум сообщества: обсуждения, вопросы и ответы. Работает прямо на GitHub Pages." />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <title>Форум</title>
+    <script>
+      // Тема применяется до первой отрисовки, чтобы не было «вспышки» белого.
+      (function () {
+        try {
+          var saved = localStorage.getItem('forum:theme')
+          var theme = saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+          document.documentElement.setAttribute('data-theme', theme)
+        } catch (e) {}
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
