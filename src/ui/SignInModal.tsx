@@ -18,6 +18,8 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
   const [secondsLeft, setSecondsLeft] = useState(0)
   const [pat, setPat] = useState('')
   const [patBusy, setPatBusy] = useState(false)
+  const [copied, setCopied] = useState(false)
+  const [popupBlocked, setPopupBlocked] = useState(false)
 
   const intervalRef = useRef<number | null>(null)
   const tickRef = useRef<number | null>(null)
@@ -48,7 +50,16 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
       setDevice(res.data)
       setPhase('waiting')
       setSecondsLeft(res.data.expires_in)
-      window.open(res.data.verification_uri, '_blank', 'noopener')
+      // Код удобно сразу скопировать: на GitHub его надо будет вставить.
+      try {
+        await navigator.clipboard.writeText(res.data.user_code)
+        setCopied(true)
+      } catch {
+        setCopied(false)
+      }
+      // Открываем вкладку сразу по клику (иначе часть браузеров блокирует popup).
+      const opened = window.open(res.data.verification_uri, '_blank', 'noopener')
+      if (!opened) setPopupBlocked(true)
 
       tickRef.current = window.setInterval(() => {
         setSecondsLeft((s) => {
@@ -195,21 +206,68 @@ export function SignInModal({ onClose }: { onClose: () => void }) {
 
               {phase === 'waiting' && device ? (
                 <div className="device">
-                  <div className="device__code">
+                  <ol className="device__steps">
+                    <li>
+                      <b>Код скопирован</b> — нажмите «Открыть GitHub» и вставьте его на странице
+                      подтверждения (или введите вручную).
+                    </li>
+                    <li>Нажмите «Authorize» и вернитесь сюда — вход произойдёт сам.</li>
+                  </ol>
+
+                  <button
+                    type="button"
+                    className="device__code"
+                    title="Скопировать код"
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(device.user_code)
+                        setCopied(true)
+                        toast('Код скопирован')
+                      } catch {
+                        setCopied(false)
+                      }
+                    }}
+                  >
                     <span>{device.user_code}</span>
-                  </div>
-                  <p className="muted small">
-                    Введите этот код на <a href={device.verification_uri} target="_blank" rel="noopener noreferrer">{device.verification_uri}</a>.
-                    Осталось {Math.floor(secondsLeft / 60)}:{String(secondsLeft % 60).padStart(2, '0')}
-                  </p>
+                    <small>
+                      <Icon name={copied ? 'check' : 'copy'} size={14} />
+                      {copied ? 'скопировано — нажмите, чтобы скопировать снова' : 'нажмите, чтобы скопировать'}
+                    </small>
+                  </button>
+
+                  {popupBlocked ? (
+                    <div className="notice notice--warn small">
+                      Браузер заблокировал новую вкладку — откройте{' '}
+                      <a href={device.verification_uri} target="_blank" rel="noopener noreferrer">
+                        {device.verification_uri}
+                      </a>{' '}
+                      вручную.
+                    </div>
+                  ) : null}
+
                   <div className="device__status">
-                    <Spinner size={16} label="Ждём подтверждения…" />
+                    <Spinner size={16} label={`Ждём подтверждения… код действует ещё ${Math.floor(secondsLeft / 60)}:${String(secondsLeft % 60).padStart(2, '0')}`} />
                   </div>
+
                   <div className="row row--gap">
                     <a className="btn btn--primary" href={device.verification_uri} target="_blank" rel="noopener noreferrer">
                       Открыть GitHub <Icon name="external" size={15} />
                     </a>
-                    <button type="button" className="btn" onClick={() => { stopTimers(); setPhase('idle'); }}>
+                    <button
+                      type="button"
+                      className="btn"
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(device.user_code)
+                          toast('Код скопирован')
+                        } catch {
+                          /*ignore*/
+                        }
+                      }}
+                    >
+                      <Icon name="copy" size={15} /> Скопировать код
+                    </button>
+                    <button type="button" className="btn btn--ghost" onClick={() => { stopTimers(); setPhase('idle') }}>
                       Отмена
                     </button>
                   </div>

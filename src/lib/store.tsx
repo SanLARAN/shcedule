@@ -113,7 +113,10 @@ function readConfig(): ForumConfig {
   try {
     const raw = localStorage.getItem(`${LS_PREFIX}config`)
     if (!raw) return DEFAULT_CONFIG
-    return { ...DEFAULT_CONFIG, ...(JSON.parse(raw) as Partial<ForumConfig>) }
+    const merged = { ...DEFAULT_CONFIG, ...(JSON.parse(raw) as Partial<ForumConfig>) }
+    // Если в браузере сохранён пустой client_id, а в сборке он появился — берём значение сборки.
+    if (!merged.clientId && DEFAULT_CONFIG.clientId) merged.clientId = DEFAULT_CONFIG.clientId
+    return merged
   } catch {
     return DEFAULT_CONFIG
   }

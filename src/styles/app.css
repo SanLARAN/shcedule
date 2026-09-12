@@ -735,9 +735,26 @@ code {
 .signin-panel { margin-top: 18px; display: flex; flex-direction: column; gap: 14px; }
 .signin-account { display: flex; gap: 16px; align-items: flex-start; padding: 6px 0; }
 .device { display: flex; flex-direction: column; gap: 14px; }
+.device__steps { display: flex; flex-direction: column; gap: 10px; counter-reset: d; }
+.device__steps li { position: relative; padding-left: 32px; font-size: 13.5px; color: var(--text-soft); }
+.device__steps li::before {
+  counter-increment: d; content: counter(d); position: absolute; left: 0; top: 0;
+  width: 22px; height: 22px; border-radius: 7px; display: grid; place-items: center;
+  background: var(--ink); color: var(--bg); font-size: 12px; font-weight: 800;
+}
+[data-theme='dark'] .device__steps li::before { background: var(--lime); color: #0b1622; }
+
 .device__code {
+  display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%;
   text-align: center; font-family: var(--mono); font-size: 32px; font-weight: 800; letter-spacing: 0.18em;
-  padding: 20px; border-radius: var(--radius-lg); background: var(--lime); color: #0e1d2c;
+  padding: 22px; border: 0; border-radius: var(--radius-lg); background: var(--lime); color: #0e1d2c; cursor: pointer;
+  transition: transform 0.1s, background 0.16s;
+}
+.device__code:hover { background: var(--lime-deep); }
+.device__code:active { transform: translateY(1px); }
+.device__code small {
+  display: inline-flex; align-items: center; gap: 6px; font-family: var(--font);
+  font-size: 11.5px; font-weight: 650; letter-spacing: 0; opacity: 0.7;
 }
 .device__status { display: flex; justify-content: center; }
 .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }

@@ -9,7 +9,11 @@ export type ForumConfig = {
   owner: string
   /** Имя репозитория */
   repo: string
-  /** client_id GitHub OAuth App с включённым Device Flow (опционально, нужен для входа) */
+  /**
+   * client_id GitHub OAuth App с включённым Device Flow — нужен для входа по коду.
+   * Значение публичное (как в URL авторизации), client_secret в устройстве не нужен
+   * и в приложении НЕ хранится.
+   */
   clientId: string
   /** Заголовок форума */
   title: string
@@ -22,7 +26,7 @@ export type ForumConfig = {
 export const DEFAULT_CONFIG: ForumConfig = {
   owner: 'SanLARAN',
   repo: 'shcedule',
-  clientId: '',
+  clientId: 'Ov23liWuXxbsQPSrK34t',
   title: 'Форум',
   tagline: 'Обсуждаем, спрашиваем, делимся',
   demo: false,
