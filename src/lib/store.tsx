@@ -399,10 +399,16 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           return { status: 'ok', number: thread.number }
         }
         const body = buildBody(input.body, { category: input.category, tags: input.tags, author: user?.login })
+        const labels = await gh.ensureLabels(
+          config.owner,
+          config.repo,
+          ['forum', `cat:${input.category}`, ...input.tags.slice(0, 3)],
+          token!,
+        )
         const res = await gh.createIssue(
           config.owner,
           config.repo,
-          { title: input.title, body, labels: ['forum', input.category] },
+          { title: input.title, body, labels },
           token!,
         )
         return { status: 'ok', number: res.data.number }

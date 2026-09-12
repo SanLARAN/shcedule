@@ -1,0 +1,41 @@
+name: Создать метки форума
+
+# GitHub не создаёт метки автоматически: если метки нет, она просто не
+# применится к теме. Этот workflow один раз заводит метки разделов и закрепления.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/setup-labels.yml'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  labels:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPO: ${{ github.repository }}
+    steps:
+      - name: Создать метки
+        run: |
+          set -e
+          create() {
+            name="$1"; color="$2"; desc="$3"
+            if gh label list --repo "$REPO" --limit 200 --json name --jq '.[].name' | grep -Fxq "$name"; then
+              echo "уже есть: $name"
+            else
+              gh label create "$name" --repo "$REPO" --color "$color" --description "$desc" && echo "создана: $name"
+            fi
+          }
+          create "forum"        "4f6bfd" "Пост форума"
+          create "pinned"       "b8860b" "Закреплённая тема наверху форума"
+          create "cat:general"  "3b6cf6" "Раздел: Общее"
+          create "cat:help"     "e8590c" "Раздел: Помощь"
+          create "cat:ideas"    "b8860b" "Раздел: Идеи"
+          create "cat:show"     "0f9d58" "Раздел: Проекты"
+          create "cat:news"     "8250df" "Раздел: Новости"
+          create "cat:offtopic" "6b7280" "Раздел: Оффтоп"

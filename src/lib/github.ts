@@ -1,4 +1,4 @@
-import type { GhComment, GhIssue, GhReaction, GhUser } from './types'
+import type { GhComment, GhIssue, GhLabel, GhReaction, GhUser } from './types'
 
 const API = 'https://api.github.com'
 const OAUTH = 'https://github.com'
@@ -298,4 +298,57 @@ export function getUser(login: string, token?: string | null, signal?: AbortSign
     token,
     signal,
   })
+}
+
+/* ------------------------------------------------------------------ */
+/* Метки                                                              */
+/* ------------------------------------------------------------------ */
+
+const LABEL_COLORS = ['4f6bfd', '0f9d58', '8250df', 'b8860b', 'e8590c', '6b7280', '0ea5e9']
+
+function colorForLabel(name: string): string {
+  let hash = 0
+  for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) >>> 0
+  return LABEL_COLORS[hash % LABEL_COLORS.length]
+}
+
+/**
+ * GitHub не создаёт метки автоматически: если метки нет, она просто не применится.
+ * Здесь мы аккуратно создаём недостающие (тихо игнорируем нехватку прав) и
+ * возвращаем только те имена, которые реально существуют.
+ */
+export async function ensureLabels(
+  owner: string,
+  repo: string,
+  names: string[],
+  token: string,
+  signal?: AbortSignal,
+): Promise<string[]> {
+  const wanted = [...new Set(names.map((n) => n.trim()).filter(Boolean))].slice(0, 8)
+  if (!wanted.length) return []
+
+  let existing: Set<string>
+  try {
+    const res = await request<GhLabel[]>(`${API}/repos/${owner}/${repo}/labels?per_page=100`, { token, signal })
+    existing = new Set(res.data.map((l) => l.name.toLowerCase()))
+  } catch {
+    return [] // не смогли прочитать список — просто не ставим метки
+  }
+
+  for (const name of wanted) {
+    if (existing.has(name.toLowerCase())) continue
+    try {
+      await request<GhLabel>(`${API}/repos/${owner}/${repo}/labels`, {
+        token,
+        method: 'POST',
+        body: { name, color: colorForLabel(name), description: 'Метка форума' },
+        signal,
+      })
+      existing.add(name.toLowerCase())
+    } catch {
+      /* нет прав на создание метки — пропускаем */
+    }
+  }
+
+  return wanted.filter((n) => existing.has(n.toLowerCase()))
 }
