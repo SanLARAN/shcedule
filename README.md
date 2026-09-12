@@ -1,5 +1,7 @@
 # Форум на GitHub Pages
 
+🌐 **Живой сайт:** <https://sanlaran.github.io/shcedule/> · репозиторий-хранилище: `SanLARAN/shcedule`
+
 Полноценный форум (темы, ответы, разделы, теги, лайки, профили, вход через GitHub), который
 работает **как статический сайт на GitHub Pages**. Никакого собственного сервера и базы данных:
 темы и комментарии хранятся в **GitHub Issues** репозитория, а сайт лишь читает и пишет их
@@ -45,7 +47,12 @@ npm run build    # прод-сборка в dist/
 
 ## Публикация на GitHub Pages
 
-1. **Включите Pages через Actions.** Репозиторий → `Settings` → `Pages` → **Source: GitHub Actions**.
+Сайт уже опубликован: <https://sanlaran.github.io/shcedule/> (собирается workflow
+`deploy.yml` при каждом пуше в `main`).
+
+1. **Источник сборки — GitHub Actions.** Репозиторий → `Settings` → `Pages` → **Source: GitHub Actions**.
+   ⚠️ Важно: если оставить режим «Deploy from a branch», GitHub публикует **исходники** ветки
+   (а не собранный сайт), и страница будет пустой.
 2. **Слейте ветку с кодом в `main`.** Workflow `.github/workflows/deploy.yml` сам соберёт проект
    и опубликует его. Сайт появится по адресу `https://<владелец>.github.io/<репозиторий>/`.
 3. Первый деплой можно запустить вручную: `Actions` → `Deploy forum to GitHub Pages` → `Run workflow`.
