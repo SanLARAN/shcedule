@@ -1,0 +1,27 @@
+{
+  "name": "forum-gh",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Статический форум на GitHub Pages: посты и комментарии живут в GitHub Issues",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "dompurify": "^3.1.6",
+    "marked": "^14.1.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.26.2"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.10",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "typescript": "^5.6.2",
+    "vite": "^5.4.8"
+  }
+}
