@@ -2,7 +2,11 @@ name: Deploy forum to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    # main — боевая публикация.
+    # Рабочая ветка сессии тоже деплоится: пока Settings → Pages переключён на
+    # «Deploy from a branch», GitHub публикует исходники ветки, и сайт ломается
+    # после каждого пуша. Наш деплой идёт следом и возвращает собранный сайт.
+    branches: [main, arena/01a0966a-shcedule]
   workflow_dispatch:
 
 permissions:
