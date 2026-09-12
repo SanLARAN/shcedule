@@ -36,8 +36,28 @@ jobs:
       - name: SPA fallback (deep links на GitHub Pages)
         run: cp dist/index.html dist/404.html
 
+      # enablement: true — GitHub сам включит Pages, если он ещё не настроен.
       - name: Configure Pages
+        id: pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      # Если Pages настроен на старый режим «deploy from a branch», шаг выше упадёт.
+      # Пишем в summary точную инструкцию, чтобы не гадать, что делать.
+      - name: Инструкция, если Pages не переключён
+        if: failure()
+        run: |
+          {
+            echo "### Не удалось подготовить Pages"
+            echo ""
+            echo "Скорее всего Pages ещё публикуется из ветки (legacy-режим), а для этого"
+            echo "workflow нужен режим **GitHub Actions**."
+            echo ""
+            echo "1. Откройте **Settings → Pages**"
+            echo "2. В блоке **Build and deployment → Source** выберите **GitHub Actions**"
+            echo "3. Вернитесь в **Actions** и выберите **Re-run all jobs**"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
