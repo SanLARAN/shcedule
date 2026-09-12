@@ -17,7 +17,10 @@ export function ThreadCard({
 }) {
   const cat = getCategory(thread.category)
   return (
-    <article className={classNames('thread-card', pinned && 'thread-card--pinned')}>
+    <article
+      className={classNames('thread-card', pinned && 'thread-card--pinned')}
+      style={{ ['--cat' as string]: cat.color }}
+    >
       <Link to={`/u/${thread.author.login}`} className="thread-card__avatar" tabIndex={-1} aria-hidden="true">
         <Avatar author={thread.author} size={44} />
       </Link>
@@ -26,8 +29,9 @@ export function ThreadCard({
         <div className="thread-card__top">
           {pinned ? <span className="pin">📌 закреплено</span> : null}
           {showCategory ? (
-            <Link to={`/c/${cat.id}`} className="cat-link" style={{ color: cat.color }}>
-              <span aria-hidden="true">{cat.emoji}</span> {cat.label}
+            <Link to={`/c/${cat.id}`} className="cat-link">
+              <span className="cat-link__dot" style={{ background: cat.color }} aria-hidden="true" />
+              {cat.label}
             </Link>
           ) : null}
           {thread.state === 'closed' ? <Badge className="badge--muted">закрыто</Badge> : null}

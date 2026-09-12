@@ -41,7 +41,7 @@ export function CategoryPage() {
 
   return (
     <div className="category-page">
-      <header className="page-head" style={{ borderColor: category.color }}>
+      <header className="page-head" style={{ ['--cat' as string]: category.color }}>
         <div className="page-head__emoji" aria-hidden="true">{category.emoji}</div>
         <div>
           <h1 className="page-title">{category.label}</h1>
@@ -331,7 +331,7 @@ export function AboutPage() {
         <h2 className="panel__title">Разделы</h2>
         <div className="cat-cards">
           {CATEGORIES.map((c) => (
-            <Link key={c.id} to={`/c/${c.id}`} className="cat-card" style={{ borderTopColor: c.color }}>
+            <Link key={c.id} to={`/c/${c.id}`} className="cat-card" style={{ ['--cat' as string]: c.color }}>
               <span className="cat-card__emoji" aria-hidden="true">{c.emoji}</span>
               <b>{c.label}</b>
               <span className="muted small">{c.description}</span>

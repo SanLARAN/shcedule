@@ -36,13 +36,15 @@ export type Category = {
   description: string
 }
 
+// Цвета разделов — плоские пастельные блоки из референса:
+// небо, персик, лайм, лаванда, роза, серый.
 export const CATEGORIES: Category[] = [
-  { id: 'general', label: 'Общее', emoji: '💬', color: '#3b6cf6', description: 'Всё, что не подошло в другие разделы' },
-  { id: 'help', label: 'Помощь', emoji: '🆘', color: '#e8590c', description: 'Задайте вопрос — сообщество поможет' },
-  { id: 'ideas', label: 'Идеи', emoji: '💡', color: '#b8860b', description: 'Предложения и обсуждение развития' },
-  { id: 'show', label: 'Проекты', emoji: '🚀', color: '#0f9d58', description: 'Покажите, что вы сделали' },
-  { id: 'news', label: 'Новости', emoji: '📰', color: '#8250df', description: 'Анонсы и события' },
-  { id: 'offtopic', label: 'Оффтоп', emoji: '☕', color: '#6b7280', description: 'Свободное общение' },
+  { id: 'general', label: 'Общее', emoji: '💬', color: '#A9C7E8', description: 'Всё, что не подошло в другие разделы' },
+  { id: 'help', label: 'Помощь', emoji: '🆘', color: '#FFC48A', description: 'Задайте вопрос — сообщество поможет' },
+  { id: 'ideas', label: 'Идеи', emoji: '💡', color: '#D8FA4F', description: 'Предложения и обсуждение развития' },
+  { id: 'show', label: 'Проекты', emoji: '🚀', color: '#B9A9F5', description: 'Покажите, что вы сделали' },
+  { id: 'news', label: 'Новости', emoji: '📰', color: '#F7A8CE', description: 'Анонсы и события' },
+  { id: 'offtopic', label: 'Оффтоп', emoji: '☕', color: '#C9CFD6', description: 'Свободное общение' },
 ]
 
 export const DEFAULT_CATEGORY = 'general'

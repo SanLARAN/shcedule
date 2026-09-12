@@ -129,8 +129,9 @@ export function ThreadPage() {
           <Icon name="arrow-left" size={16} /> Все темы
         </Link>
         <span className="crumbs__sep">/</span>
-        <Link to={`/c/${cat.id}`} className="crumbs__link" style={{ color: cat.color }}>
-          {cat.emoji} {cat.label}
+        <Link to={`/c/${cat.id}`} className="crumbs__link">
+          <span className="cat-link__dot" style={{ background: cat.color }} aria-hidden="true" />
+          {cat.label}
         </Link>
       </nav>
 

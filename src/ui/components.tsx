@@ -64,10 +64,9 @@ export function Badge({
   soft?: boolean
   className?: string
 }) {
+  // Пастельные цвета из референса работают как ФОН чипа, текст — тёмные чернила.
   const style = color
-    ? soft
-      ? { color, background: `color-mix(in srgb, ${color} 14%, transparent)`, borderColor: `color-mix(in srgb, ${color} 30%, transparent)` }
-      : { background: color, borderColor: color, color: '#fff' }
+    ? { background: color, borderColor: 'transparent', color: '#0e1d2c' }
     : undefined
   return (
     <span className={classNames('badge', className)} style={style}>
