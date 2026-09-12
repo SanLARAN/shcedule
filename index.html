@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark" />
+  <title>shcedule — форум сообщества</title>
+  <meta name="description" content="Форум сообщества: посты, комментарии и лайки. Хостинг на GitHub Pages, данные — в GitHub Issues." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%237c5cff'/%3E%3Cpath d='M9 12h14M9 20h9' stroke='white' stroke-width='2.5' stroke-linecap='round'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./css/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar__inner">
+      <a class="brand" href="#/" aria-label="На главную">
+        <span class="brand__logo" aria-hidden="true"></span>
+        <span class="brand__text">
+          <span class="brand__name" id="brand-name">shcedule</span>
+          <span class="brand__tag" id="brand-tag"></span>
+        </span>
+      </a>
+
+      <nav class="topnav" id="topnav" aria-label="Основная навигация">
+        <a href="#/" data-nav="feed">Лента</a>
+        <a href="#/new" data-nav="new">Новый пост</a>
+      </nav>
+
+      <div class="topbar__right">
+        <div class="auth-slot" id="auth-slot"></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" id="app" tabindex="-1"></main>
+
+  <footer class="footer">
+    <div class="container footer__inner">
+      <span id="footer-brand">shcedule</span>
+      <span class="footer__dot">·</span>
+      <span>данные хранятся в GitHub Issues</span>
+      <span class="footer__dot">·</span>
+      <a href="https://github.com/SanLARAN/shcedule" target="_blank" rel="noopener noreferrer">репозиторий ↗</a>
+    </div>
+  </footer>
+
+  <div id="modal-root"></div>
+  <div id="toast-root" class="toasts" aria-live="polite"></div>
+
+  <script src="./js/vendor/marked.min.js"></script>
+  <script src="./js/vendor/purify.min.js"></script>
+  <script src="./js/config.js"></script>
+  <script src="./js/api.js"></script>
+  <script src="./js/auth.js"></script>
+  <script src="./js/components.js"></script>
+  <script src="./js/app.js"></script>
+</body>
+</html>
