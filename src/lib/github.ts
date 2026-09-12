@@ -46,14 +46,20 @@ async function request<T>(url: string, opts: ReqOpts = {}): Promise<GhResponse<T
     ...(opts.headers || {}),
   }
   if (opts.token) headers.Authorization = `Bearer ${opts.token}`
-  if (opts.body !== undefined) headers['Content-Type'] = 'application/json'
+  const bodyIsString = typeof opts.body === 'string'
+  if (opts.body !== undefined && !bodyIsString) headers['Content-Type'] = 'application/json'
+
+  let bodyInit: BodyInit | undefined
+  if (opts.body !== undefined) {
+    bodyInit = bodyIsString ? (opts.body as string) : JSON.stringify(opts.body)
+  }
 
   let res: Response
   try {
     res = await fetch(url, {
       method: opts.method || 'GET',
       headers,
-      body: opts.body !== undefined ? JSON.stringify(opts.body) : undefined,
+      body: bodyInit,
       signal: opts.signal,
       redirect: 'follow',
     })
@@ -222,9 +228,11 @@ export type DeviceCodeResponse = {
 }
 
 export function startDeviceFlow(clientId: string) {
+  // OAuth-эндпоинты GitHub ожидают form-encoded тело — JSON они принимают не всегда.
   return request<DeviceCodeResponse>(`${OAUTH}/login/device/code`, {
     method: 'POST',
-    body: { client_id: clientId, scope: 'public_repo' },
+    body: new URLSearchParams({ client_id: clientId, scope: 'public_repo' }).toString(),
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
   })
 }
 
@@ -238,12 +246,12 @@ export type TokenPollResult =
 export async function pollDeviceToken(clientId: string, deviceCode: string): Promise<TokenPollResult> {
   const res = await fetch(`${OAUTH}/login/oauth/access_token`, {
     method: 'POST',
-    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
-    body: JSON.stringify({
+    headers: { Accept: 'application/json', 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
       client_id: clientId,
       device_code: deviceCode,
       grant_type: 'urn:ietf:params:oauth:grant-type:device_code',
-    }),
+    }).toString(),
   })
   const data = (await res.json().catch(() => ({}))) as {
     access_token?: string
