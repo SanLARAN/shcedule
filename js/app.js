@@ -27,13 +27,70 @@
   const PER_STEP = 20;
 
   /* ============================================================
+     Темы (переключение оформления)
+     ============================================================ */
+  const THEMES = {
+    neon:     { label: "Неон",       scheme: "dark",  swatch: "linear-gradient(135deg,#7c5cff,#22d3ee)" },
+    midnight: { label: "Миднайт",    scheme: "dark",  swatch: "linear-gradient(135deg,#7aa2f7,#bb9af7)" },
+    light:    { label: "Светлый",    scheme: "light", swatch: "linear-gradient(135deg,#2563eb,#06b6d4)" },
+    cozy:     { label: "Уютный",     scheme: "light", swatch: "linear-gradient(135deg,#d96c4f,#f2b56b)" },
+  };
+  const LS_THEME = "shcedule.theme";
+
+  function currentTheme() {
+    try { return localStorage.getItem(LS_THEME) || "neon"; } catch (_) { return "neon"; }
+  }
+
+  function applyTheme(key) {
+    if (!THEMES[key]) key = "neon";
+    document.documentElement.setAttribute("data-theme", key);
+    const meta = document.querySelector('meta[name="color-scheme"]');
+    if (meta) meta.setAttribute("content", THEMES[key].scheme);
+    try { localStorage.setItem(LS_THEME, key); } catch (_) {}
+    return key;
+  }
+
+  function renderThemeSwitcher() {
+    const slot = document.getElementById("theme-slot");
+    if (!slot) return;
+    slot.innerHTML = "";
+    const active = currentTheme();
+    const menu = h("div", { class: "theme-slot" }, [
+      h("button", {
+        class: "theme-toggle",
+        title: "Сменить тему",
+        "aria-label": "Сменить тему",
+        onclick: (e) => { e.stopPropagation(); menu.classList.toggle("open"); },
+      }, [h("span", { html: I.palette })]),
+      h("div", { class: "theme-menu" }, Object.entries(THEMES).map(([key, t]) =>
+        h("button", {
+          class: "theme-option" + (key === active ? " active" : ""),
+          onclick: () => {
+            applyTheme(key);
+            menu.classList.remove("open");
+            menu.querySelectorAll(".theme-option").forEach((o, i) =>
+              o.classList.toggle("active", Object.keys(THEMES)[i] === key));
+          },
+        }, [
+          h("span", { class: "theme-option__swatch", style: { background: t.swatch } }),
+          t.label,
+          h("span", { class: "theme-option__check", html: I.check }),
+        ])
+      )),
+    ]);
+    slot.appendChild(menu);
+  }
+
+  /* ============================================================
      Инициализация
      ============================================================ */
   function init() {
+    applyTheme(currentTheme());
     document.getElementById("brand-name").textContent = CONFIG.site.name;
     document.getElementById("brand-tag").textContent = CONFIG.site.tagline;
     document.getElementById("footer-brand").textContent = CONFIG.site.name;
     document.title = `${CONFIG.site.name} — ${CONFIG.site.tagline}`;
+    renderThemeSwitcher();
     renderAuth();
     window.addEventListener("hashchange", route);
     if (!location.hash) location.replace("#/");
@@ -780,7 +837,7 @@
   }
 
   function closeMenus() {
-    document.querySelectorAll(".menu.open").forEach((m) => m.classList.remove("open"));
+    document.querySelectorAll(".menu.open, .theme-slot.open").forEach((m) => m.classList.remove("open"));
   }
   document.addEventListener("click", closeMenus);
 
