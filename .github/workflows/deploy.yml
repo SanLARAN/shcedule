@@ -2,7 +2,11 @@ name: Deploy forum to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    # main — боевая публикация.
+    # Рабочая ветка сессии тоже деплоится: пока Settings → Pages переключён на
+    # «Deploy from a branch», GitHub публикует исходники ветки, и сайт ломается
+    # после каждого пуша. Наш деплой идёт следом и возвращает собранный сайт.
+    branches: [main, arena/01a0966a-shcedule]
   workflow_dispatch:
 
 permissions:
@@ -71,6 +75,25 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # Пока Settings → Pages в режиме «Deploy from a branch», GitHub после каждого
+      # пуша публикует ИСХОДНИКИ ветки (и страница становится пустой). Наша сборка
+      # завершается позже, поэтому ждём и публикуем собранный сайт поверх.
+      # После переключения Source на «GitHub Actions» задержка исчезнет сама.
+      - name: Защита от legacy-режима Pages
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -u
+          REPO="${{ github.repository }}"
+          build_type=$(gh api "repos/$REPO/pages" --jq '.build_type' 2>/dev/null || echo unknown)
+          if [ "$build_type" = "workflow" ]; then
+            echo "Pages настроен на GitHub Actions — задержка не нужна."
+            exit 0
+          fi
+          echo "Pages в режиме ветки (build_type=$build_type): ждём, пока GitHub опубликует исходники,"
+          echo "чтобы наша сборка легла последней и сайт остался рабочим."
+          sleep 90
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
